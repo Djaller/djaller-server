@@ -1,0 +1,89 @@
+version: '4'
+
+services:
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+    depends_on:
+      - rabbitmq
+    environment:
+      - "TZ=@timezone@"
+      - "RABBIT_URI=amqp://djaller:4l3hA255kX9U@rabbitmq:5672"
+
+  redis:
+    image: bitnami/redis
+    environment:
+      # ALLOW_EMPTY_PASSWORD is recommended only for development.
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    ports:
+      - '6379:6379'
+    volumes:
+      - 'redis_data:/bitnami/redis/data'
+
+  rabbitmq:
+    image: bitnami/rabbitmq
+    ports:
+      - '4369:4369'
+      - '5551:5551'
+      - '5552:5552'
+      - '5672:5672'
+      - '25672:25672'
+      - '15672:15672'
+    environment:
+      - RABBITMQ_USERNAME=djaller
+      - RABBITMQ_PASSWORD=4l3hA255kX9U
+    volumes:
+      - 'rabbitmq_data:/bitnami/rabbitmq/mnesia'
+
+  postgresql:
+    image: bitnami/postgresql
+    ports:
+      - '5432:5432'
+    volumes:
+      - 'postgresql_data:/bitnami/postgresql'
+    env_file:
+      - postgres.env
+    environment:
+      - POSTGRESQL_USERNAME=djaller
+      - POSTGRESQL_DATABASE=master_tenant
+      - POSTGRESQL_REPLICATION_MODE=master
+
+  postgresql-slave:
+    image: bitnami/postgresql
+    ports:
+      - '5432'
+    depends_on:
+      - postgresql
+    env_file:
+      - postgres.env
+    environment:
+      - POSTGRESQL_MASTER_HOST=postgresql
+      - POSTGRESQL_MASTER_PORT_NUMBER=5432
+      - POSTGRESQL_REPLICATION_MODE=slave
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "1081:8080"
+    environment:
+      - ADMINER_PLUGINS=tables-filter tinymce table-structure sql-log file-upload
+      - ADMINER_DESIGN=nicu
+    links:
+      - postgresql:db
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+volumes:
+  redis_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+  postgresql_data:
+    driver: local

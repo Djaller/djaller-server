@@ -1,0 +1,11 @@
+server:
+  port: 8000
+spring:
+  zipkin:
+    sender:
+      type: rabbit
+  application:
+    name: admin-server
+  rabbitmq:
+    username: djaller
+    password: 4l3hA255kX9U

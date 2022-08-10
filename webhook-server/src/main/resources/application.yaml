@@ -1,0 +1,14 @@
+server:
+  port: 8001
+spring:
+  rabbitmq:
+    username: djaller
+    password: 4l3hA255kX9U
+  zipkin:
+    sender:
+      type: rabbit
+  application:
+    name: webhook-server
+  cloud:
+    function:
+      definition: on_app_event

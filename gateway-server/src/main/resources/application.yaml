@@ -1,0 +1,56 @@
+server:
+  port: 8004
+  forward-headers-strategy: framework
+
+spring:
+  rabbitmq:
+    username: djaller
+    password: 4l3hA255kX9U
+  zipkin:
+    sender:
+      type: rabbit
+  application:
+    name: gateway-server
+  cloud:
+    gateway:
+      routes:
+        - id: auth-service
+          uri: lb://auth-server
+          predicates:
+            - Path=/auth/api
+            - Path=/auth/oauth2
+          filters:
+            - RemoveRequestHeader=Cookie
+
+        - id: auth-client
+          uri: http://localhost:3000
+          predicates:
+            - Path=/auth
+          filters:
+            - RemoveRequestHeader=Cookie
+
+        - id: mail-server
+          uri: lb://mail-server
+          predicates:
+            - Path=/m/api
+          filters:
+            - RemoveRequestHeader=Cookie
+
+        - id: tontine-server
+          uri: lb://tontine-server
+          predicates:
+            - Path=/t/api
+          filters:
+            - RemoveRequestHeader=Cookie
+
+        - id: webhook-server
+          uri: lb://webhook-server
+          predicates:
+            - Path=/w/api
+          filters:
+            - RemoveRequestHeader=Cookie
+  security:
+    oauth2:
+      resource-server:
+        jwt:
+          issuer-uri: http://localhost:8004/auth
