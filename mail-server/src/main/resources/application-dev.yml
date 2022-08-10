@@ -1,0 +1,15 @@
+spring:
+  rabbitmq:
+    username: djaller
+    password: 4l3hA255kX9U
+  mail:
+    host: localhost
+    port: 1025
+  security:
+    oauth2:
+      resource-server:
+        jwt:
+          issuer-uri: http://localhost:8003
+
+server:
+  port: 8002

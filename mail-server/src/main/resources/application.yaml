@@ -1,0 +1,20 @@
+spring:
+  zipkin:
+    sender:
+      type: rabbit
+  application:
+    name: mail-server
+  cloud:
+    function:
+      definition: on_send_email
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+management:
+  health:
+    mail:
+      enabled: false
+
+springdoc:
+  show-actuator: true
