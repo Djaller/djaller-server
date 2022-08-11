@@ -1,4 +1,4 @@
-package com.djaller.server;
+package com.djaller.server.webhook;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

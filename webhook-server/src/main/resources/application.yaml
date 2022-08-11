@@ -1,9 +1,4 @@
-server:
-  port: 8001
 spring:
-  rabbitmq:
-    username: djaller
-    password: 4l3hA255kX9U
   zipkin:
     sender:
       type: rabbit
@@ -12,3 +7,12 @@ spring:
   cloud:
     function:
       definition: on_app_event
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
