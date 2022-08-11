@@ -1,6 +1,7 @@
 package com.djaller.server.email.web;
 
-import com.djaller.server.email.domain.SendMailEntity;
+import com.djaller.common.mail.model.SendMail;
+import com.djaller.server.email.mapper.SendMailMapper;
 import com.djaller.server.email.repo.SendMailRepo;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,11 +22,12 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class SendMailResource {
     private final SendMailRepo mailRepo;
+    private final SendMailMapper mapper;
 
     @GetMapping
     @PageableAsQueryParam
-    public Collection<SendMailEntity> getMailSend(@Parameter(hidden = true) @PageableDefault Pageable pageable) {
-        return mailRepo.findAll(pageable).getContent();
+    public Collection<SendMail> getMailSend(@Parameter(hidden = true) @PageableDefault Pageable pageable) {
+        return mailRepo.findAll(pageable).map(mapper::toModel).getContent();
     }
 
 }

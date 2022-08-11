@@ -38,7 +38,7 @@ public class SendMailEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private SendMailStatus status;
 
-    @NotEmpty
+    @NotNull
     private EmailTemplate template;
 
     @ElementCollection

@@ -3,6 +3,8 @@ package com.djaller.server.email.web;
 import com.djaller.common.mail.model.EmailTemplate;
 import com.djaller.server.email.domain.MailTemplateEntity;
 import com.djaller.server.email.exception.NotFoundException;
+import com.djaller.server.email.mapper.MailTemplateMapper;
+import com.djaller.server.email.model.MailTemplate;
 import com.djaller.server.email.repo.MailTemplateRepo;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,21 +24,28 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class MailTemplateResource {
     private final MailTemplateRepo mailTemplateRepo;
+    private final MailTemplateMapper mapper;
 
     @GetMapping
     @PageableAsQueryParam
-    public Collection<MailTemplateEntity> getAllTemplate(@Parameter(hidden = true) @PageableDefault Pageable pageable) {
-        return mailTemplateRepo.findAll(pageable).getContent();
+    public Collection<MailTemplate> getAllTemplate(@Parameter(hidden = true) @PageableDefault Pageable pageable) {
+        return mailTemplateRepo
+                .findAll(pageable)
+                .map(mapper::toModel)
+                .getContent();
     }
 
     @GetMapping("{template}")
     @PageableAsQueryParam
-    public MailTemplateEntity getSingle(@PathVariable EmailTemplate template) {
-        return mailTemplateRepo.findByTemplate(template).orElseThrow(NotFoundException::new);
+    public MailTemplate getSingle(@PathVariable EmailTemplate template) {
+        return mailTemplateRepo
+                .findByTemplate(template)
+                .map(mapper::toModel)
+                .orElseThrow(NotFoundException::new);
     }
 
     @PutMapping("{template}")
-    public MailTemplateEntity save(@PathVariable EmailTemplate template, @RequestBody @Valid MailTemplateEntity model) {
+    public MailTemplate save(@PathVariable EmailTemplate template, @RequestBody @Valid MailTemplate model) {
         var entity = mailTemplateRepo.findByTemplate(template).orElseGet(() -> {
             var n = new MailTemplateEntity();
             n.setTemplate(template);
@@ -44,7 +53,8 @@ public class MailTemplateResource {
         });
         entity.setHtmlText(model.getHtmlText());
         entity.setPlanText(model.getPlanText());
-        return mailTemplateRepo.save(entity);
+        var saved = mailTemplateRepo.save(entity);
+        return mapper.toModel(saved);
     }
 
 }

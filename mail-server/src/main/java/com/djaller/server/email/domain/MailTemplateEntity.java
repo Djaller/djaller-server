@@ -1,7 +1,6 @@
 package com.djaller.server.email.domain;
 
 import com.djaller.common.mail.model.EmailTemplate;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +25,6 @@ public class MailTemplateEntity implements Serializable {
     @Column(columnDefinition = "uuid")
     private UUID id;
 
-    @JsonIgnore
     @Column(unique = true)
     @Enumerated(EnumType.STRING)
     private EmailTemplate template;

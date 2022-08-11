@@ -3,7 +3,6 @@ package com.djaller.server.email.mapper;
 import com.djaller.common.mail.model.SendMail;
 import com.djaller.server.email.domain.SendMailEntity;
 import com.google.gson.Gson;
-import lombok.Setter;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.HashMap;
 import java.util.Map;
 
-@Setter
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
         uses = {SendToMapper.class, EmailAttachmentMapper.class}
