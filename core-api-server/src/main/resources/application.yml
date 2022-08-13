@@ -1,9 +1,4 @@
-server:
-  port: 8005
 spring:
-  rabbitmq:
-    username: djaller
-    password: 4l3hA255kX9U
   zipkin:
     sender:
       type: rabbit
@@ -11,3 +6,12 @@ spring:
     name: api-server
   liquibase:
     enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

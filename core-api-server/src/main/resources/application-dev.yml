@@ -1,0 +1,14 @@
+spring:
+  rabbitmq:
+    username: djaller
+    password: 4l3hA255kX9U
+  security:
+    oauth2:
+      resource-server:
+        jwt:
+          issuer-uri: http://localhost:8004/auth
+  jpa:
+    show-sql: true
+
+server:
+  port: 8005
