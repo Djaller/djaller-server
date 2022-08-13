@@ -17,38 +17,45 @@ spring:
         - id: auth-service
           uri: lb://auth-server
           predicates:
-            - Path=/auth/api
-            - Path=/auth/oauth2
+            - Path=/auth/oauth2/**, /auth/api/**, /auth/.well-known/**
           filters:
             - RemoveRequestHeader=Cookie
 
         - id: auth-client
-          uri: http://localhost:3000
+          uri: http://localhost:3000/auth
           predicates:
-            - Path=/auth
+            - Path=/auth/**
           filters:
             - RemoveRequestHeader=Cookie
 
         - id: mail-server
           uri: lb://mail-server
           predicates:
-            - Path=/m/api
+            - Path=/api/mail-templates/**, /api/send-mails/**
           filters:
             - RemoveRequestHeader=Cookie
 
         - id: tontine-server
           uri: lb://tontine-server
           predicates:
-            - Path=/t/api
+            - Path=/api/tontines/**
           filters:
             - RemoveRequestHeader=Cookie
 
         - id: webhook-server
           uri: lb://webhook-server
           predicates:
-            - Path=/w/api
+            - Path=/api/webhooks/**
           filters:
             - RemoveRequestHeader=Cookie
+
+        - id: core-server
+          uri: lb://api-server
+          predicates:
+            - Path=/api/accounts/**
+          filters:
+            - RemoveRequestHeader=Cookie
+
   security:
     oauth2:
       resource-server:
