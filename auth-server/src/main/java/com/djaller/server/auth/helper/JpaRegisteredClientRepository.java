@@ -2,12 +2,9 @@ package com.djaller.server.auth.helper;
 
 import com.djaller.server.auth.service.ClientService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
 @Component
 @RequiredArgsConstructor

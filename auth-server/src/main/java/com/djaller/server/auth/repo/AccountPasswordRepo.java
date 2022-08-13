@@ -19,10 +19,10 @@ public interface AccountPasswordRepo extends BaseRepo<AccountPasswordEntity, UUI
 
     @Modifying
     @Query("""
-UPDATE AccountPasswordEntity a
-SET a.active = false
-WHERE a.accountId = :accountId
-""")
+            UPDATE AccountPasswordEntity a
+            SET a.active = false
+            WHERE a.accountId = :accountId
+            """)
     void deactivateAccountPassword(@Param("accountId") UUID accountId);
 
 }

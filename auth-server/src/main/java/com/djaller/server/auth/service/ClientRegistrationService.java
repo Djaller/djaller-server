@@ -1,7 +1,6 @@
 package com.djaller.server.auth.service;
 
 import com.djaller.server.auth.SimpleClientRegistration;
-import com.djaller.server.auth.domain.ClientRegistrationEntity;
 import com.djaller.server.auth.exception.NotFoundException;
 import com.djaller.server.auth.mapper.ClientRegistrationMapper;
 import com.djaller.server.auth.repo.ClientRegistrationRepo;
