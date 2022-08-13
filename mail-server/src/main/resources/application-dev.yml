@@ -9,7 +9,11 @@ spring:
     oauth2:
       resource-server:
         jwt:
-          issuer-uri: http://localhost:8003
-
+          issuer-uri: http://localhost:8004
 server:
   port: 8002
+
+management:
+  health:
+    mail:
+      enabled: false

@@ -43,9 +43,8 @@ public class SendMailEntity implements Serializable {
 
     @ElementCollection
     @CollectionTable(name = "send_mail_configs")
-    private Map<String, String> config;
+    private Map<String, MapString> config;
 
-    @NotEmpty
     @ElementCollection
     @CollectionTable(name = "send_mail_attachments")
     private Set<EmailAttachmentEmbeddable> attachments = new HashSet<>();

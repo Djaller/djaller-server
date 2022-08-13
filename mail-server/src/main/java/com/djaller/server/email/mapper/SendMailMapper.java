@@ -1,6 +1,7 @@
 package com.djaller.server.email.mapper;
 
 import com.djaller.common.mail.model.SendMail;
+import com.djaller.server.email.domain.MapString;
 import com.djaller.server.email.domain.SendMailEntity;
 import com.google.gson.Gson;
 import org.mapstruct.InheritInverseConfiguration;
@@ -28,23 +29,27 @@ public abstract class SendMailMapper {
     @Mapping(target = "status", ignore = true)
     public abstract SendMailEntity toEntity(SendMail model);
 
-    protected Map<String, Object> toModel(Map<String, String> entity) {
+    protected Map<String, Object> toModel(Map<String, MapString> entity) {
         var map = new HashMap<String, Object>();
         entity.forEach((key, value) -> map.put(key, toObj(value)));
         return map;
     }
 
-    protected Map<String, String> toEntity(Map<String, Object> entity) {
-        var map = new HashMap<String, String>();
+    protected Map<String, MapString> toEntity(Map<String, Object> entity) {
+        var map = new HashMap<String, MapString>();
         entity.forEach((key, value) -> map.put(key, toJson(value)));
         return map;
     }
 
-    private String toJson(Object obj) {
-        return gson.toJson(obj);
+    private MapString toJson(Object obj) {
+        return new MapString(obj.getClass().getName(), gson.toJson(obj));
     }
 
-    private Object toObj(String json) {
-        return gson.fromJson(json, Object.class);
+    private Object toObj(MapString json) {
+        try {
+            return gson.fromJson(json.getValue(), Class.forName(json.getType()));
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

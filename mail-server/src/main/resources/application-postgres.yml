@@ -4,5 +4,8 @@ spring:
     driver-class-name: org.postgresql.Driver
     username: djaller
     password: de4XdghgM7p6p59rfJzkm5RGuwDYPkb6
+    hikari:
+      schema: mail
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+

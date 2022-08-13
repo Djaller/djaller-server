@@ -12,9 +12,6 @@ spring:
       ddl-auto: update
 
 management:
-  health:
-    mail:
-      enabled: false
   endpoints:
     web:
       exposure:
