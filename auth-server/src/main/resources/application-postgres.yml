@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/master_tenant
+    driver-class-name: org.postgresql.Driver
+    username: djaller
+    password: de4XdghgM7p6p59rfJzkm5RGuwDYPkb6
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect

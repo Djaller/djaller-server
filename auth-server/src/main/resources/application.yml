@@ -1,13 +1,52 @@
-server:
-  port: 8003
 spring:
-  rabbitmq:
-    username: djaller
-    password: 4l3hA255kX9U
+  thymeleaf:
+    cache: true
   zipkin:
     sender:
       type: rabbit
   application:
     name: auth-server
-  liquibase:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  flyway:
     enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+info:
+  app-name: auth-server
+springdoc:
+  api-docs:
+    enabled: true
+
+server:
+  forward-headers-strategy: framework
+  servlet:
+    context-path: /auth
+
+feign:
+  hystrix:
+    enabled: true
+  okhttp:
+    enabled: true
+  oauth2:
+    enabled: true
+    load-balanced: true
+  compression:
+    request:
+      enabled: true
+  client:
+    config:
+      create-account:
+        exception-propagation-policy: UNWRAP
+      update-account:
+        exception-propagation-policy: UNWRAP
+
+logging:
+  level:
+    com.djaller.server.auth.feign: DEBUG

@@ -1,0 +1,11 @@
+spring:
+  thymeleaf:
+    cache: false
+  rabbitmq:
+    username: djaller
+    password: 4l3hA255kX9U
+  jpa:
+    show-sql: true
+
+server:
+  port: 8003
