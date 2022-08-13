@@ -11,7 +11,6 @@ public class OpenApiConfig {
         SpringDocUtils
                 .getConfig()
                 .replaceWithClass(Locale.class, String.class)
-        //        .replaceWithClass(Webhook.Headers.class, String.class)
         ;
     }
 }
