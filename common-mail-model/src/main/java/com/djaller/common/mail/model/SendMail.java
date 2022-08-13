@@ -1,9 +1,7 @@
 package com.djaller.common.mail.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
@@ -11,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Data
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 public class SendMail implements Serializable {
