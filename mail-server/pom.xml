@@ -30,6 +30,11 @@
             <groupId>com.djaller.server</groupId>
             <artifactId>common-mail-model</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.9</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springdoc</groupId>

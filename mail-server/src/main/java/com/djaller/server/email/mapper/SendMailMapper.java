@@ -29,13 +29,13 @@ public abstract class SendMailMapper {
     @Mapping(target = "status", ignore = true)
     public abstract SendMailEntity toEntity(SendMail model);
 
-    protected Map<String, Object> toModel(Map<String, MapString> entity) {
+    public Map<String, Object> toModel(Map<String, MapString> entity) {
         var map = new HashMap<String, Object>();
         entity.forEach((key, value) -> map.put(key, toObj(value)));
         return map;
     }
 
-    protected Map<String, MapString> toEntity(Map<String, Object> entity) {
+    public Map<String, MapString> toEntity(Map<String, Object> entity) {
         var map = new HashMap<String, MapString>();
         entity.forEach((key, value) -> map.put(key, toJson(value)));
         return map;

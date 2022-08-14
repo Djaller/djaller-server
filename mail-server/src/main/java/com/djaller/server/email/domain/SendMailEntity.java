@@ -30,7 +30,7 @@ public class SendMailEntity implements Serializable {
     private String subject;
 
     @NotEmpty
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "send_mail_recipients")
     private Set<SendToEmbeddable> to = new HashSet<>();
 
@@ -41,11 +41,11 @@ public class SendMailEntity implements Serializable {
     @NotNull
     private EmailTemplate template;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "send_mail_configs")
     private Map<String, MapString> config;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "send_mail_attachments")
     private Set<EmailAttachmentEmbeddable> attachments = new HashSet<>();
 }

@@ -6,6 +6,7 @@ import com.djaller.server.email.domain.MailTemplateEntity;
 import com.djaller.server.email.domain.SendMailEntity;
 import com.djaller.server.email.domain.SendMailStatus;
 import com.djaller.server.email.domain.SendToEmbeddable;
+import com.djaller.server.email.helper.StringLookupImpl;
 import com.djaller.server.email.mapper.SendMailMapper;
 import com.djaller.server.email.repo.MailTemplateRepo;
 import com.djaller.server.email.repo.SendMailRepo;
@@ -13,6 +14,7 @@ import com.djaller.server.email.service.SaveEmailService;
 import com.djaller.server.email.service.SendEmailService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.text.StringSubstitutor;
 import org.springframework.core.io.UrlResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -20,9 +22,11 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URI;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Slf4j
@@ -68,6 +72,9 @@ public class MailServiceImpl implements SaveEmailService, SendEmailService {
                 continue;
             }
 
+            List<MailTemplateEntity> all = mailTemplateRepo.findAll();
+            log.info("template {}", all.get(0).getTemplate());
+
             var templateEntity$ = mailTemplateRepo.findByTemplate(emailTemplate);
             if (templateEntity$.isEmpty()) {
                 log.info("Template {} not present. Please create it", emailTemplate);
@@ -80,7 +87,7 @@ public class MailServiceImpl implements SaveEmailService, SendEmailService {
                     entity.setStatus(SendMailStatus.SEND);
                     sendMailRepo.save(entity);
                     log.debug("Email send to {}", entity.getTo());
-                } catch (MessagingException | MalformedURLException | UnsupportedEncodingException e) {
+                } catch (IOException | MessagingException e) {
                     entity.setStatus(SendMailStatus.ERROR);
                     sendMailRepo.save(entity);
                     log.error("Email not send", e);
@@ -90,14 +97,18 @@ public class MailServiceImpl implements SaveEmailService, SendEmailService {
     }
 
     private void sendSingle(SendMailEntity entity, MailTemplateEntity template)
-            throws MessagingException, MalformedURLException, UnsupportedEncodingException {
+            throws MessagingException, IOException {
         var message = emailSender.createMimeMessage();
+        var model = sendMailMapper.toModel(entity.getConfig());
 
-        var helper = new MimeMessageHelper(message, entity.getAttachments().size() != 0);
+        var helper = new MimeMessageHelper(message, true);
         helper.setFrom("noreply@djaller.com", "Djaller");
         helper.setTo(toAddress(entity.getTo()));
         helper.setSubject(entity.getSubject());
-        helper.setText(template.getPlanText(), template.getHtmlText());
+
+        var planText = StringLookupImpl.processTemplate(template.getPlanText(), model);
+        var htmlBody = StringLookupImpl.processTemplate(template.getHtmlText(), model);
+        helper.setText(planText, htmlBody);
 
         for (var attachment : entity.getAttachments()) {
             var resource = new UrlResource(URI.create(attachment.getUrl()));
@@ -106,4 +117,5 @@ public class MailServiceImpl implements SaveEmailService, SendEmailService {
 
         emailSender.send(message);
     }
+
 }
