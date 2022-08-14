@@ -14,11 +14,12 @@ public class AccountUserDetailMapper {
                 .builder()
                 //
                 .accountExpired(false)
-                .accountLocked(true)
+                .accountLocked(false)
                 .credentialsExpired(false)
                 .disabled(false)
                 .username(account.getEmail())
                 .password(entity.getValue())
+                .authorities("USER")
                 //
                 .build()
                 ;

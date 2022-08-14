@@ -17,6 +17,7 @@ import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -101,7 +102,11 @@ public class AccountPasswordService {
 
         var payload = new HashMap<String, Object>();
         payload.put("account", account);
-        payload.put("codeToken", codeToken);
+        payload.put("url", ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path("/api/passwords/code")
+                .queryParam("code", codeToken)
+                .toUriString());
 
         var sendMail = new SendMail();
         sendMail.setTo(Set.of(new SendTo(account.getEmail(), account.getLastName())));
@@ -110,5 +115,17 @@ public class AccountPasswordService {
         sendMail.setConfig(payload);
 
         streamBridge.send(EmailHandlerConfig.handlerName + "-in-0", sendMail);
+    }
+
+    public UUID accountIdForCode(String code) {
+        var codeId = code.split("\\.")[0];
+        var entity = accountPasswordCodeRepo
+                .findById(UUID.fromString(codeId))
+                .orElse(null);
+        if (entity == null) {
+            return null;
+        }
+
+        return entity.getAccountId();
     }
 }

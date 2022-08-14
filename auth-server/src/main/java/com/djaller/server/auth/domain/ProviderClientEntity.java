@@ -17,8 +17,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "client_registrations")
-public class ClientRegistrationEntity {
+@Table(name = "provider_clients")
+public class ProviderClientEntity {
 
     @Id
     @GeneratedValue
@@ -47,7 +47,7 @@ public class ClientRegistrationEntity {
     private String redirectUri;
 
     @BatchSize(size = 5)
-    @CollectionTable(name = "client_registration_scopes")
+    @CollectionTable(name = "provider_client_scopes")
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> scopes;
 
@@ -69,9 +69,15 @@ public class ClientRegistrationEntity {
     @Column(length = 1000)
     private String detailIssuerUri;
 
-    @CollectionTable(name = "client_registration_configuration_metadata")
+    @CollectionTable(name = "provider_client_configuration_metadata")
     @ElementCollection(fetch = FetchType.EAGER)
+    // @JoinColumn(name = "provider_id")
+    // @OnDelete(action = OnDeleteAction.CASCADE)
+    // @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
     private Map<String, MapString> detailConfigurationMetadata;
+
+    @Column
+    private Boolean systemClient = false;
 
     public enum AuthenticationMethod {
         HEADER, FORM, QUERY

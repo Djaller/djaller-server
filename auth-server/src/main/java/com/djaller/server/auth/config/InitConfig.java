@@ -1,7 +1,7 @@
 package com.djaller.server.auth.config;
 
-import com.djaller.server.auth.service.ClientRegistrationService;
 import com.djaller.server.auth.service.ClientService;
+import com.djaller.server.auth.service.ProviderClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -23,7 +23,7 @@ import javax.annotation.PostConstruct;
 public class InitConfig {
 
     private static final String AUTH_CLIENT_SECRET = "auth-client-secret";
-    private final ClientRegistrationService clientRegistrationService;
+    private final ProviderClientService providerClientService;
     private final ClientService clientService;
     private final PasswordEncoder passwordEncoder;
 
@@ -44,9 +44,9 @@ public class InitConfig {
             clientService.save(registeredClient);
 
             var clientRegistration = authClientRegistration();
-            if (clientRegistrationService.findByRegistrationId(clientRegistration.getRegistrationId()) != null)
-                clientRegistrationService.deleteByRegistrationId(clientRegistration.getRegistrationId());
-            clientRegistrationService.save(clientRegistration);
+            if (providerClientService.findByRegistrationId(clientRegistration.getRegistrationId()) != null)
+                providerClientService.deleteByRegistrationId(clientRegistration.getRegistrationId());
+            providerClientService.save(clientRegistration, true);
 
             log.info("Auth client created");
         };

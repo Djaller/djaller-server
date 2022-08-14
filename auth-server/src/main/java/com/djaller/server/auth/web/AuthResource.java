@@ -2,6 +2,7 @@ package com.djaller.server.auth.web;
 
 import com.djaller.server.auth.model.LoginData;
 import com.djaller.server.auth.model.LoginError;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+@Tag(name = "auth")
 @Slf4j
 @RestController
 @RequestMapping
@@ -49,5 +51,4 @@ public class AuthResource {
             }
         }
     }
-
 }

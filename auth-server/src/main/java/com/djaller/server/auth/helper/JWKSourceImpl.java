@@ -7,7 +7,6 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -17,7 +16,6 @@ import java.util.List;
 public class JWKSourceImpl implements JWKSource<SecurityContext> {
     private final KeyPairService keyPairService;
 
-    @Cacheable("jwks")
     @Override
     public List<JWK> get(JWKSelector jwkSelector, SecurityContext context) {
         var jwkSet = new JWKSet(keyPairService.getRSAKeys());

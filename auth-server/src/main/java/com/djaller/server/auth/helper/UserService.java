@@ -30,14 +30,14 @@ public class UserService implements UserDetailsService, OAuth2UserService<OAuth2
             var account = getAccount.getAccountByEmail(username);
             if (account == null) {
                 log.info("account not found [{}]", username);
-                throw new UsernameNotFoundException("User [%s] not found".formatted(username));
+                throw new UsernameNotFoundException("Account [%s] not found".formatted(username));
             }
 
             var password = passwordService.findLastPassword(account.getId());
             return mapper.toDetail(account, password);
         } catch (FeignException feignException) {
-            log.info("User [%s] not found".formatted(username), feignException);
-            throw new UsernameNotFoundException("User [%s] not found".formatted(username), feignException);
+            log.info("Cannot find account [%s]".formatted(username), feignException);
+            throw new UsernameNotFoundException("Cannot find account [%s]".formatted(username), feignException);
         }
     }
 

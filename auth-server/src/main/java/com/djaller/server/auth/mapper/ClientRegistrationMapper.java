@@ -1,24 +1,44 @@
 package com.djaller.server.auth.mapper;
 
-import com.djaller.server.auth.domain.ClientRegistrationEntity;
-import com.djaller.server.auth.domain.MapString;
-import lombok.AllArgsConstructor;
+import com.djaller.server.auth.domain.ProviderClientEntity;
+import com.djaller.server.auth.model.ProviderClientModel;
+import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.core.AuthenticationMethod;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = MapStringMapper.class)
 @Component
-@AllArgsConstructor
-public class ClientRegistrationMapper {
-    private final MapStringMapper mapStringMapper;
+public abstract class ClientRegistrationMapper {
 
-    public ClientRegistrationEntity toEntity(ClientRegistration model) {
-        var entity = new ClientRegistrationEntity();
+    @Autowired
+    private MapStringMapper mapStringMapper;
+
+    @Mapping(target = "detailAuthorizationUri", source = "detail.authorizationUri")
+    @Mapping(target = "detailTokenUri", source = "detail.tokenUri")
+    @Mapping(target = "detailUserInfoUri", source = "detail.userInfoUri")
+    @Mapping(target = "detailUserInfoAuthenticationMethod", source = "detail.userInfoAuthenticationMethod")
+    @Mapping(target = "detailUserInfoAttributeName", source = "detail.userInfoAttributeName")
+    @Mapping(target = "detailJwkSetUri", source = "detail.jwkSetUri")
+    @Mapping(target = "detailIssuerUri", source = "detail.issuerUri")
+    @Mapping(target = "detailConfigurationMetadata", source = "detail.configurationMetadata")
+    public abstract ProviderClientEntity toClientRegistration(ProviderClientModel model);
+
+    @InheritInverseConfiguration
+    public abstract ProviderClientModel toClientRegistrationModel(ProviderClientEntity entity);
+
+    public ProviderClientEntity toEntity(ClientRegistration model) {
+        var entity = new ProviderClientEntity();
         entity.setRegistrationId(model.getRegistrationId());
         entity.setClientId(model.getClientId());
         entity.setClientName(model.getClientName());
@@ -36,12 +56,12 @@ public class ClientRegistrationMapper {
         entity.setDetailJwkSetUri(model.getProviderDetails().getJwkSetUri());
         entity.setDetailTokenUri(model.getProviderDetails().getTokenUri());
         entity.setDetailIssuerUri(model.getProviderDetails().getIssuerUri());
-        entity.setDetailConfigurationMetadata(toMapString(model.getProviderDetails().getConfigurationMetadata()));
+        entity.setDetailConfigurationMetadata(mapStringMapper.toMapString(model.getProviderDetails().getConfigurationMetadata()));
 
         return entity;
     }
 
-    public ClientRegistration toModel(ClientRegistrationEntity entity) {
+    public ClientRegistration toModel(ProviderClientEntity entity) {
         return ClientRegistration
                 .withRegistrationId(entity.getRegistrationId())
                 .clientId(entity.getClientId())
@@ -58,11 +78,11 @@ public class ClientRegistrationMapper {
                 .userNameAttributeName(entity.getDetailUserInfoAttributeName())
                 .jwkSetUri(entity.getDetailJwkSetUri())
                 .issuerUri(entity.getDetailIssuerUri())
-                .providerConfigurationMetadata(toMapObj(entity.getDetailConfigurationMetadata()))
+                .providerConfigurationMetadata(mapStringMapper.toMapObj(entity.getDetailConfigurationMetadata()))
                 .build();
     }
 
-    private AuthenticationMethod map(ClientRegistrationEntity.AuthenticationMethod method) {
+    protected AuthenticationMethod map(ProviderClientEntity.AuthenticationMethod method) {
         if (method == null) {
             return null;
         }
@@ -83,44 +103,22 @@ public class ClientRegistrationMapper {
         }
     }
 
-    private ClientRegistrationEntity.AuthenticationMethod map(AuthenticationMethod method) {
+    protected ProviderClientEntity.AuthenticationMethod map(AuthenticationMethod method) {
         if (method == null) {
             return null;
         }
 
         if (AuthenticationMethod.HEADER.equals(method)) {
-            return ClientRegistrationEntity.AuthenticationMethod.HEADER;
+            return ProviderClientEntity.AuthenticationMethod.HEADER;
         } else if (AuthenticationMethod.FORM.equals(method)) {
-            return ClientRegistrationEntity.AuthenticationMethod.FORM;
+            return ProviderClientEntity.AuthenticationMethod.FORM;
         } else if (AuthenticationMethod.QUERY.equals(method)) {
-            return ClientRegistrationEntity.AuthenticationMethod.QUERY;
+            return ProviderClientEntity.AuthenticationMethod.QUERY;
         }
         throw new IllegalArgumentException("Method [%s] not found".formatted(method));
     }
 
-    private Map<String, Object> toMapObj(Map<String, MapString> maps) {
-        if (maps == null) {
-            return null;
-        }
-
-        var result = new HashMap<String, Object>();
-        maps.forEach((key, mapString) -> result.put(key, mapStringMapper.toObject(mapString)));
-
-        return result;
-    }
-
-    private Map<String, MapString> toMapString(Map<String, Object> maps) {
-        if (maps == null) {
-            return null;
-        }
-
-        var result = new HashMap<String, MapString>();
-        maps.forEach((key, obj) -> result.put(key, mapStringMapper.toMapString(obj)));
-
-        return result;
-    }
-
-    private ClientAuthenticationMethod map(ClientRegistrationEntity.ClientAuthenticationMethod method) {
+    protected ClientAuthenticationMethod map(ProviderClientEntity.ClientAuthenticationMethod method) {
         if (method == null) {
             return null;
         }
@@ -147,27 +145,27 @@ public class ClientRegistrationMapper {
         }
     }
 
-    private ClientRegistrationEntity.ClientAuthenticationMethod map(ClientAuthenticationMethod method) {
+    protected ProviderClientEntity.ClientAuthenticationMethod map(ClientAuthenticationMethod method) {
         if (method == null) {
             return null;
         }
 
         if (method == ClientAuthenticationMethod.CLIENT_SECRET_BASIC) {
-            return ClientRegistrationEntity.ClientAuthenticationMethod.CLIENT_SECRET_BASIC;
+            return ProviderClientEntity.ClientAuthenticationMethod.CLIENT_SECRET_BASIC;
         } else if (method == ClientAuthenticationMethod.CLIENT_SECRET_POST) {
-            return ClientRegistrationEntity.ClientAuthenticationMethod.CLIENT_SECRET_POST;
+            return ProviderClientEntity.ClientAuthenticationMethod.CLIENT_SECRET_POST;
         } else if (method == ClientAuthenticationMethod.CLIENT_SECRET_JWT) {
-            return ClientRegistrationEntity.ClientAuthenticationMethod.CLIENT_SECRET_JWT;
+            return ProviderClientEntity.ClientAuthenticationMethod.CLIENT_SECRET_JWT;
         } else if (method == ClientAuthenticationMethod.PRIVATE_KEY_JWT) {
-            return ClientRegistrationEntity.ClientAuthenticationMethod.PRIVATE_KEY_JWT;
+            return ProviderClientEntity.ClientAuthenticationMethod.PRIVATE_KEY_JWT;
         } else if (method == ClientAuthenticationMethod.NONE) {
-            return ClientRegistrationEntity.ClientAuthenticationMethod.NONE;
+            return ProviderClientEntity.ClientAuthenticationMethod.NONE;
         } else {
             throw new IllegalArgumentException("Method [%s] not found".formatted(method));
         }
     }
 
-    private AuthorizationGrantType map(ClientRegistrationEntity.AuthorizationGrantType grantType) {
+    protected AuthorizationGrantType map(ProviderClientEntity.AuthorizationGrantType grantType) {
         if (grantType == null) {
             return null;
         }
@@ -194,24 +192,38 @@ public class ClientRegistrationMapper {
         }
     }
 
-    private ClientRegistrationEntity.AuthorizationGrantType map(AuthorizationGrantType grantType) {
+    protected ProviderClientEntity.AuthorizationGrantType map(AuthorizationGrantType grantType) {
         if (grantType == null) {
             return null;
         }
 
         if (grantType == AuthorizationGrantType.AUTHORIZATION_CODE) {
-            return ClientRegistrationEntity.AuthorizationGrantType.AUTHORIZATION_CODE;
+            return ProviderClientEntity.AuthorizationGrantType.AUTHORIZATION_CODE;
         } else if (grantType == AuthorizationGrantType.REFRESH_TOKEN) {
-            return ClientRegistrationEntity.AuthorizationGrantType.REFRESH_TOKEN;
+            return ProviderClientEntity.AuthorizationGrantType.REFRESH_TOKEN;
         } else if (grantType == AuthorizationGrantType.CLIENT_CREDENTIALS) {
-            return ClientRegistrationEntity.AuthorizationGrantType.CLIENT_CREDENTIALS;
+            return ProviderClientEntity.AuthorizationGrantType.CLIENT_CREDENTIALS;
         } else if (grantType == AuthorizationGrantType.PASSWORD) {
-            return ClientRegistrationEntity.AuthorizationGrantType.PASSWORD;
+            return ProviderClientEntity.AuthorizationGrantType.PASSWORD;
         } else if (grantType == AuthorizationGrantType.JWT_BEARER) {
-            return ClientRegistrationEntity.AuthorizationGrantType.JWT_BEARER;
+            return ProviderClientEntity.AuthorizationGrantType.JWT_BEARER;
         } else {
             throw new IllegalArgumentException("Grant Type [%s] not found".formatted(grantType));
         }
     }
 
+    protected Set<String> map(String str) {
+        if (str == null) {
+            return null;
+        }
+
+        return Arrays.stream(str.split(",")).collect(Collectors.toSet());
+    }
+
+    protected String map(Set<String> set) {
+        if (set == null) {
+            return null;
+        }
+        return String.join(",", set);
+    }
 }
