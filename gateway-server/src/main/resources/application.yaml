@@ -18,8 +18,8 @@ spring:
           uri: lb://auth-server
           predicates:
             - Path=/auth/oauth2/**, /auth/api/**, /auth/.well-known/**
-          filters:
-            - RemoveRequestHeader=Cookie
+          # filters:
+          #   - RemoveRequestHeader=Cookie
 
         - id: auth-client
           uri: http://localhost:3000/auth
