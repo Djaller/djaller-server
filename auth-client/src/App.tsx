@@ -7,6 +7,7 @@ import {createTheme, CssBaseline, ThemeProvider} from "@mui/material";
 import {ForgotPassword} from "./pages/forgot-password";
 import {Provider} from "react-redux";
 import {store} from "./store";
+import {ChangePassword} from "./pages/change-password";
 
 const theme = createTheme();
 
@@ -18,6 +19,7 @@ function App() {
                 <BrowserRouter basename='/auth'>
                     <Routes>
                         <Route element={<AuthWrapper/>}>
+                            <Route path='/change-password' element={<ChangePassword/>}/>
                             <Route path='/forgot-password' element={<ForgotPassword/>}/>
                             <Route path='/sign-in' element={<SignInPage/>}/>
                             <Route path='/register' element={<RegisterPage/>}/>
