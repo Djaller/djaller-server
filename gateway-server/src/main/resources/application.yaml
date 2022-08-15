@@ -17,7 +17,7 @@ spring:
         - id: auth-service
           uri: lb://auth-server
           predicates:
-            - Path=/auth/oauth2/**, /auth/api/**, /auth/.well-known/**
+            - Path=/auth/oauth2/**, /auth/api/**, /.well-known/**
           # filters:
           #   - RemoveRequestHeader=Cookie
 
@@ -60,4 +60,4 @@ spring:
     oauth2:
       resource-server:
         jwt:
-          issuer-uri: http://localhost:8004/auth
+          issuer-uri: http://localhost:8004

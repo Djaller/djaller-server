@@ -78,7 +78,7 @@ public class InitConfig {
                 .clientSecret(AUTH_CLIENT_SECRET)
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-                .issuerUri("http://localhost:8004/auth")
+                .issuerUri("http://localhost:8004")
                 .tokenUri("http://localhost:8004/auth/oauth2/token")
                 .scope("openid")
                 .clientName("Auth Client")

@@ -5,14 +5,16 @@ const injectedRtkApi = api.injectEndpoints({
       GetAppClientByClientIdApiResponse,
       GetAppClientByClientIdApiArg
     >({
-      query: (queryArg) => ({ url: `/api/app-clients/${queryArg.clientId}` }),
+      query: (queryArg) => ({
+        url: `/auth/api/app-clients/${queryArg.clientId}`,
+      }),
     }),
     updateAppClient: build.mutation<
       UpdateAppClientApiResponse,
       UpdateAppClientApiArg
     >({
       query: (queryArg) => ({
-        url: `/api/app-clients/${queryArg.clientId}`,
+        url: `/auth/api/app-clients/${queryArg.clientId}`,
         method: "PUT",
         body: queryArg.appClient,
       }),
@@ -22,23 +24,30 @@ const injectedRtkApi = api.injectEndpoints({
       UpdateSecretAppClientApiArg
     >({
       query: (queryArg) => ({
-        url: `/api/app-clients/secret/${queryArg.clientId}`,
+        url: `/auth/api/app-clients/secret/${queryArg.clientId}`,
         method: "PUT",
         body: queryArg.appClientSecretUpdate,
+      }),
+    }),
+    register: build.mutation<RegisterApiResponse, RegisterApiArg>({
+      query: (queryArg) => ({
+        url: `/auth/api/register`,
+        method: "POST",
+        body: queryArg.registerData,
       }),
     }),
     listProviderClient: build.query<
       ListProviderClientApiResponse,
       ListProviderClientApiArg
     >({
-      query: () => ({ url: `/api/provider-clients` }),
+      query: () => ({ url: `/auth/api/provider-clients` }),
     }),
     saveProviderClient: build.mutation<
       SaveProviderClientApiResponse,
       SaveProviderClientApiArg
     >({
       query: (queryArg) => ({
-        url: `/api/provider-clients`,
+        url: `/auth/api/provider-clients`,
         method: "POST",
         body: queryArg.providerClient,
       }),
@@ -48,7 +57,7 @@ const injectedRtkApi = api.injectEndpoints({
       ResetPasswordApiArg
     >({
       query: (queryArg) => ({
-        url: `/api/passwords/reset`,
+        url: `/auth/api/passwords/reset`,
         method: "POST",
         body: queryArg.resetPassword,
       }),
@@ -58,27 +67,27 @@ const injectedRtkApi = api.injectEndpoints({
       ForgotPasswordApiArg
     >({
       query: (queryArg) => ({
-        url: `/api/passwords/forgot`,
+        url: `/auth/api/passwords/forgot`,
         method: "POST",
         body: queryArg.forgotPassword,
       }),
     }),
     login: build.mutation<LoginApiResponse, LoginApiArg>({
       query: (queryArg) => ({
-        url: `/api/login`,
+        url: `/auth/api/login`,
         method: "POST",
         body: queryArg.loginData,
       }),
     }),
     listAppClient: build.query<ListAppClientApiResponse, ListAppClientApiArg>({
-      query: () => ({ url: `/api/app-clients` }),
+      query: () => ({ url: `/auth/api/app-clients` }),
     }),
     saveAppClient: build.mutation<
       SaveAppClientApiResponse,
       SaveAppClientApiArg
     >({
       query: (queryArg) => ({
-        url: `/api/app-clients`,
+        url: `/auth/api/app-clients`,
         method: "POST",
         body: queryArg.appClient,
       }),
@@ -87,17 +96,17 @@ const injectedRtkApi = api.injectEndpoints({
       ListAllProviderClientApiResponse,
       ListAllProviderClientApiArg
     >({
-      query: () => ({ url: `/api/provider-clients/and-systems` }),
+      query: () => ({ url: `/auth/api/provider-clients/and-systems` }),
     }),
     logout: build.query<LogoutApiResponse, LogoutApiArg>({
-      query: () => ({ url: `/api/logout` }),
+      query: () => ({ url: `/auth/api/logout` }),
     }),
     deleteProviderClient: build.mutation<
       DeleteProviderClientApiResponse,
       DeleteProviderClientApiArg
     >({
       query: (queryArg) => ({
-        url: `/api/provider-clients/by-registration/${queryArg.registrationId}`,
+        url: `/auth/api/provider-clients/by-registration/${queryArg.registrationId}`,
         method: "DELETE",
       }),
     }),
@@ -106,7 +115,7 @@ const injectedRtkApi = api.injectEndpoints({
       DeleteProviderClient1ApiArg
     >({
       query: (queryArg) => ({
-        url: `/api/app-clients/by-client-id/${queryArg.clientId}`,
+        url: `/auth/api/app-clients/by-client-id/${queryArg.clientId}`,
         method: "DELETE",
       }),
     }),
@@ -128,6 +137,10 @@ export type UpdateSecretAppClientApiArg = {
   clientId: string;
   appClientSecretUpdate: AppClientSecretUpdate;
 };
+export type RegisterApiResponse = /** status 200 OK */ Account;
+export type RegisterApiArg = {
+  registerData: RegisterData;
+};
 export type ListProviderClientApiResponse =
   /** status 200 OK */ SimpleProviderClientModel[];
 export type ListProviderClientApiArg = void;
@@ -145,7 +158,7 @@ export type ForgotPasswordApiArg = {
   /** {@link ForgotPassword ForgotPassword} */
   forgotPassword: ForgotPassword;
 };
-export type LoginApiResponse = /** status 200 OK */ object;
+export type LoginApiResponse = /** status 200 OK */ RedirectionData;
 export type LoginApiArg = {
   loginData: LoginData;
 };
@@ -249,6 +262,26 @@ export type AppClient = {
 export type AppClientSecretUpdate = {
   secret: string;
 };
+export type Account = {
+  id?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  email?: string;
+  emailVerified?: boolean;
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  phoneNumberVerified?: boolean;
+  status?: "ACTIVE" | "LOCKED";
+};
+export type RegisterData = {
+  email: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  password: string;
+  rememberMe?: boolean;
+};
 export type SimpleProviderClientModel = {
   id?: string;
   registrationId?: string;
@@ -299,6 +332,9 @@ export type ResetPassword = {
 export type ForgotPassword = {
   username: string;
 };
+export type RedirectionData = {
+  redirectUrl: string;
+};
 export type LoginData = {
   username: string;
   password: string;
@@ -308,6 +344,7 @@ export const {
   useGetAppClientByClientIdQuery,
   useUpdateAppClientMutation,
   useUpdateSecretAppClientMutation,
+  useRegisterMutation,
   useListProviderClientQuery,
   useSaveProviderClientMutation,
   useResetPasswordMutation,

@@ -1,8 +1,7 @@
-// Or from '@reduxjs/toolkit/query' if not using the auto-generated hooks
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import {createApi, retry} from '@reduxjs/toolkit/query/react'
+import {axiosBaseQuery} from "../helper.base-query";
 
-// initialize an empty api service that we'll inject endpoints into later as needed
 export const emptySplitApi = createApi({
-    baseQuery: fetchBaseQuery({ baseUrl: '/auth' }),
+    baseQuery: retry(axiosBaseQuery(), {maxRetries: 3}),
     endpoints: () => ({}),
 })

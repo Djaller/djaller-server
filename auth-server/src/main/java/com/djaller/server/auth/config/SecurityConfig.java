@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -16,9 +17,12 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @EnableGlobalMethodSecurity(
-        securedEnabled = true
+        securedEnabled = true,
+        jsr250Enabled = true,
+        prePostEnabled = true
 )
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -32,7 +36,7 @@ public class SecurityConfig {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
         http
                 .exceptionHandling(exceptions ->
-                        exceptions.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/sign-in"))
+                        exceptions.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/auth/sign-in"))
                 );
         return http.build();
     }
@@ -42,33 +46,51 @@ public class SecurityConfig {
         http
                 .authorizeRequests(authorizeRequests ->
                         authorizeRequests
-                                .antMatchers("/swagger-ui.html/**", "/swagger-ui/**", "/actuator/**", "/v3/api-docs/**", "/h2-console/**", "/oauth2/**", "/", "/sign-in", "/api/**").permitAll()
+                                .antMatchers(
+                                        "/",
+                                        "/swagger-ui.html/**",
+                                        "/swagger-ui/**",
+                                        "/actuator/**",
+                                        "/v3/api-docs/**",
+                                        "/h2-console/**",
+                                        // Auth
+                                        "/auth/oauth2/**",
+                                        "/auth/sign-in/**",
+                                        "/error/**",
+                                        "/auth/api/**"
+                                ).permitAll()
                                 .anyRequest().authenticated()
                 )
                 .formLogin(loginConfigurer -> loginConfigurer
-                        .loginPage("/sign-in")
+                        .loginPage("/auth/sign-in")
                         .loginProcessingUrl("/hidden/login")
-                        .failureUrl("/sign-in?error=true")
-                        .defaultSuccessUrl("/api/redirect")
+                        .failureUrl("/auth/sign-in?error=true")
+                        .defaultSuccessUrl("/auth/api/redirect")
                 )
                 .oauth2Login(l -> l
-                        .authorizationEndpoint(a -> a.baseUri("/oauth2/authorize"))
-                        .redirectionEndpoint(r -> r.baseUri("/oauth2/callback/*"))
+                        .authorizationEndpoint(a -> a.baseUri("/auth/oauth2/authorize"))
+                        .redirectionEndpoint(r -> r.baseUri("/auth/oauth2/callback/*"))
                         .userInfoEndpoint(u -> u.userService(userService))
-                        .failureUrl("/sign-in?error=oauth2")
-                        .loginPage("/sign-in")
+                        .failureUrl("/auth/sign-in?error=oauth2")
+                        .loginPage("/auth/sign-in")
                         .loginProcessingUrl("/hidden/login")
                 )
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable);
+                .csrf(c -> c.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+        //
+        ;
         return http.build();
     }
 
     @Bean
     public ProviderSettings providerSettings() {
         return ProviderSettings.builder()
-                .oidcUserInfoEndpoint("/oauth2/userinfo")
-                .oidcClientRegistrationEndpoint("/oauth2/connect/register")
+                .authorizationEndpoint("/auth/oauth2/authorize")
+                .tokenEndpoint("/auth/oauth2/token")
+                .jwkSetEndpoint("/auth/oauth2/jwks")
+                .tokenRevocationEndpoint("/auth/oauth2/revoke")
+                .tokenIntrospectionEndpoint("/auth/oauth2/introspect")
+                .oidcUserInfoEndpoint("/auth/oauth2/userinfo")
+                .oidcClientRegistrationEndpoint("/auth/oauth2/register")
                 .build();
     }
 

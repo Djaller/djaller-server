@@ -6,7 +6,7 @@ spring:
     oauth2:
       resource-server:
         jwt:
-          issuer-uri: http://localhost:8004/auth
+          issuer-uri: http://localhost:8004
   jpa:
     show-sql: true
 

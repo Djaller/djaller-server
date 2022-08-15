@@ -15,7 +15,7 @@ import java.util.Collection;
 @Tag(name = "app-client")
 @Slf4j
 @RestController
-@RequestMapping("/api/app-clients")
+@RequestMapping("/auth/api/app-clients")
 @RequiredArgsConstructor
 public class AppClientResource {
 

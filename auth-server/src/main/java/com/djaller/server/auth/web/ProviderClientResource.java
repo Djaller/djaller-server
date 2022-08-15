@@ -15,7 +15,7 @@ import java.util.Collection;
 @Tag(name = "provider-client")
 @Slf4j
 @RestController
-@RequestMapping("/api/provider-clients")
+@RequestMapping("/auth/api/provider-clients")
 @RequiredArgsConstructor
 public class ProviderClientResource {
 

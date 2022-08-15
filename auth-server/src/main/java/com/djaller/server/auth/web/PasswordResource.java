@@ -19,7 +19,7 @@ import java.net.URI;
 @Tag(name = "password")
 @Slf4j
 @RestController
-@RequestMapping("/api/passwords")
+@RequestMapping("/auth/api/passwords")
 @RequiredArgsConstructor
 public class PasswordResource {
     private final AccountPasswordService accountPasswordService;

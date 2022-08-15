@@ -14,7 +14,8 @@ import {
 import {Link} from "react-router-dom";
 import {Lock} from "react-feather";
 import {useFormik} from "formik";
-import {useLoginMutation} from "../store/authApi";
+import {RedirectionData, useLoginMutation} from "../store/authApi";
+import {SerializedError} from "@reduxjs/toolkit";
 
 interface LoginData {
     username: string;
@@ -32,12 +33,21 @@ export function SignInPage() {
             rememberMe: [],
         },
         onSubmit: async ({username, password, rememberMe}) => {
-            await login({
+            const result = await login({
                 loginData: {
                     username, password,
                     rememberMe: rememberMe?.length > 0,
                 }
-            }).then(console.log).catch(console.error);
+            });
+
+            if ('data' in result) {
+                const data = result['data'] as RedirectionData;
+                window.location.href = data.redirectUrl;
+            } else {
+                const error = result['error'] as SerializedError;
+                // TODO error
+                console.error(error);
+            }
         }
     });
 
