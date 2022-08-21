@@ -16,11 +16,11 @@ public class OAuthClientCredentialsFeignManager {
 
     private final OAuth2AuthorizedClientManager manager;
     private final Authentication principal;
-    private final ClientRegistration clientRegistration;
+    private final String clientId;
 
-    public OAuthClientCredentialsFeignManager(OAuth2AuthorizedClientManager manager, ClientRegistration clientRegistration) {
+    public OAuthClientCredentialsFeignManager(OAuth2AuthorizedClientManager manager, String clientId) {
         this.manager = manager;
-        this.clientRegistration = clientRegistration;
+        this.clientId = clientId;
         this.principal = createPrincipal();
     }
 
@@ -57,7 +57,7 @@ public class OAuthClientCredentialsFeignManager {
 
             @Override
             public String getName() {
-                return clientRegistration.getClientId();
+                return clientId;
             }
         };
     }
@@ -65,13 +65,13 @@ public class OAuthClientCredentialsFeignManager {
     public String getAccessToken() {
         try {
             var oAuth2AuthorizeRequest = OAuth2AuthorizeRequest
-                    .withClientRegistrationId(clientRegistration.getRegistrationId())
+                    .withClientRegistrationId(clientId)
                     .principal(principal)
                     .build();
 
             var client = manager.authorize(oAuth2AuthorizeRequest);
             if (Objects.isNull(client)) {
-                throw new IllegalStateException("client credentials flow on " + clientRegistration.getRegistrationId() + " failed, client is null");
+                throw new IllegalStateException("client credentials flow on " + clientId + " failed, client is null");
             }
 
             return client.getAccessToken().getTokenValue();

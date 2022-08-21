@@ -1,47 +1,34 @@
 package com.djaller.server.auth.service;
 
+import com.djaller.server.auth.domain.AppClientEntity;
 import com.djaller.server.auth.exception.NotFoundException;
-import com.djaller.server.auth.mapper.AppClientMapper;
-import com.djaller.server.auth.mapper.RegisteredClientMapper;
-import com.djaller.server.auth.model.AppClient;
 import com.djaller.server.auth.repo.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ClientService {
-    private final AppClientMapper appClientMapper;
     private final ClientRepository clientRepository;
-    private final RegisteredClientMapper registeredClientMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public RegisteredClient findById(String id) {
-        Assert.hasText(id, "id cannot be empty");
-        return this.clientRepository.findById(id).map(registeredClientMapper::toObject).orElse(null);
+    public Optional<AppClientEntity> findById(String id) {
+        return this.clientRepository.findById(id);
     }
 
-    public RegisteredClient findByClientId(String clientId) {
+    public Optional<AppClientEntity> findByClientId(String clientId) {
         Assert.hasText(clientId, "clientId cannot be empty");
-        return this.clientRepository.findByClientId(clientId).map(registeredClientMapper::toObject).orElse(null);
+        return this.clientRepository.findByClientId(clientId);
     }
 
-    public AppClient save(AppClient client) {
-        var entity = appClientMapper.toEntity(client);
-        var saved = clientRepository.save(entity);
-        return appClientMapper.toModel(saved);
-    }
-
-    public void save(RegisteredClient registeredClient) {
-        Assert.notNull(registeredClient, "registeredClient cannot be null");
-        this.clientRepository.save(registeredClientMapper.toEntity(registeredClient));
+    public AppClientEntity save(AppClientEntity client) {
+        return clientRepository.save(client);
     }
 
     public void deleteByClientId(String clientId) {
@@ -49,26 +36,23 @@ public class ClientService {
         this.clientRepository.delete(client);
     }
 
-    public Collection<AppClient> listClientService() {
-        return clientRepository.findAll().stream().map(appClientMapper::toModel).collect(Collectors.toSet());
+    public Collection<AppClientEntity> listClientService() {
+        return clientRepository.findAll();
     }
 
-    public AppClient updateAppClient(String clientId, AppClient client) {
+    public AppClientEntity updateAppClient(String clientId, AppClientEntity client) {
         var found = this.clientRepository.findByClientId(clientId).orElseThrow(NotFoundException::new);
-        var mapped = appClientMapper.toEntity(client);
-        BeanUtils.copyProperties(mapped, found);
-        var saved = clientRepository.save(found);
-        return appClientMapper.toModel(saved);
+        BeanUtils.copyProperties(client, found);
+        return clientRepository.save(found);
     }
 
-    public AppClient getAppClientByClientId(String clientId) {
-        return this.clientRepository.findByClientId(clientId).map(appClientMapper::toModel).orElseThrow(NotFoundException::new);
+    public AppClientEntity getAppClientByClientId(String clientId) {
+        return this.clientRepository.findByClientId(clientId).orElseThrow(NotFoundException::new);
     }
 
-    public AppClient updateAppClientSecret(String clientId, String secret) {
+    public AppClientEntity updateAppClientSecret(String clientId, String secret) {
         var entity = this.clientRepository.findByClientId(clientId).orElseThrow(NotFoundException::new);
         entity.setClientSecret(passwordEncoder.encode(secret));
-        var saved = clientRepository.save(entity);
-        return appClientMapper.toModel(saved);
+        return clientRepository.save(entity);
     }
 }

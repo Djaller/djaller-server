@@ -1,11 +1,13 @@
 package com.djaller.server.auth.domain;
 
+import com.djaller.server.common.tenant.jpa.AbstractBaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+
 import java.util.UUID;
 
 @Getter
@@ -17,7 +19,7 @@ import java.util.UUID;
         name = "account_password",
         indexes = @Index(name = "idx_account_id_account_password", columnList = "account_id")
 )
-public class AccountPasswordEntity {
+public class AccountPasswordEntity extends AbstractBaseEntity {
 
     @Id
     @GeneratedValue

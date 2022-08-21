@@ -1,5 +1,6 @@
 package com.djaller.server.auth.domain;
 
+import com.djaller.server.common.tenant.jpa.AbstractBaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -18,7 +20,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 @Table(name = "provider_clients")
-public class ProviderClientEntity {
+public class ProviderClientEntity extends AbstractBaseEntity {
 
     @Id
     @GeneratedValue
@@ -71,9 +73,6 @@ public class ProviderClientEntity {
 
     @CollectionTable(name = "provider_client_configuration_metadata")
     @ElementCollection(fetch = FetchType.EAGER)
-    // @JoinColumn(name = "provider_id")
-    // @OnDelete(action = OnDeleteAction.CASCADE)
-    // @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
     private Map<String, MapString> detailConfigurationMetadata;
 
     @Column

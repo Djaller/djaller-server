@@ -1,0 +1,17 @@
+management:
+  health:
+    redis:
+      enabled: false
+
+spring:
+  cache:
+    type: redis
+    redis:
+      cache-null-values: false
+      time-to-live: 24h
+  session:
+    store-type: redis
+  data:
+    redis:
+      repositories:
+        enabled: false

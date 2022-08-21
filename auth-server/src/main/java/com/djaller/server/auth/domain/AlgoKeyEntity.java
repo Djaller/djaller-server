@@ -2,6 +2,7 @@ package com.djaller.server.auth.domain;
 
 import com.djaller.server.auth.converter.PrivateKeyConverter;
 import com.djaller.server.auth.converter.PublicKeyConverter;
+import com.djaller.server.common.tenant.jpa.AbstractBaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 @Table(name = "algorithm_jwks")
-public class AlgoKeyEntity {
+public class AlgoKeyEntity extends AbstractBaseEntity {
 
     @Id
     @GeneratedValue

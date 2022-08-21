@@ -1,9 +1,12 @@
 package com.djaller.server.auth.config;
 
 import com.djaller.server.auth.util.OAuthClientCredentialsFeignManager;
+import com.djaller.server.common.model.HeaderConstants;
+import com.djaller.server.common.tenant.model.TenantContext;
 import feign.RequestInterceptor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -24,11 +27,20 @@ public class OAuthFeignConfig {
 
     @Bean
     public RequestInterceptor requestInterceptor() {
-        var clientRegistration = clientRegistrationRepository.findByRegistrationId(CLIENT_REGISTRATION_ID);
-        var clientCredentialsFeignManager = new OAuthClientCredentialsFeignManager(authorizedClientManager(), clientRegistration);
+        var clientCredentialsFeignManager = new OAuthClientCredentialsFeignManager(authorizedClientManager(), CLIENT_REGISTRATION_ID);
 
         return requestTemplate -> {
             requestTemplate.header(HttpHeaders.AUTHORIZATION, "Bearer " + clientCredentialsFeignManager.getAccessToken());
+        };
+    }
+
+    @Bean
+    public RequestInterceptor tenantInterceptor() {
+        return requestTemplate -> {
+            String tenantName = TenantContext.getTenantName();
+            if (ObjectUtils.isNotEmpty(tenantName)) {
+                requestTemplate.header(HeaderConstants.TONTINE_ID, tenantName);
+            }
         };
     }
 

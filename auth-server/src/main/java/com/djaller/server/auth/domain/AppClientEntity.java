@@ -1,12 +1,13 @@
 package com.djaller.server.auth.domain;
 
+import com.djaller.server.common.tenant.jpa.AbstractBaseEntity;
 import lombok.*;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -16,7 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 @Table(name = "app_clients")
-public class AppClientEntity {
+public class AppClientEntity extends AbstractBaseEntity {
 
     @Id
     private String id;
@@ -27,6 +28,9 @@ public class AppClientEntity {
     private String clientSecret;
     private Instant clientSecretExpiresAt;
     private String clientName;
+
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "registeredClient", fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<AuthorizationEntity> authorization;
 
     @Enumerated(EnumType.STRING)
     @CollectionTable(
@@ -64,7 +68,7 @@ public class AppClientEntity {
     private Set<String> scopes;
 
     @OneToOne(cascade = CascadeType.ALL)
-    private ClientSettings clientSettings;
+    private ClientSettingsEntity clientSettings;
 
     @OneToOne(cascade = CascadeType.ALL)
     private TokenSettings tokenSettings;
@@ -84,10 +88,12 @@ public class AppClientEntity {
 
     @Entity
     @Table(name = "app_client_token_settings")
-    @Data
+    @Getter
+    @Setter
+    @ToString
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class TokenSettings {
+    public static class TokenSettings extends AbstractBaseEntity {
         @Id
         @GeneratedValue
         @Column(columnDefinition = "uuid")
@@ -105,10 +111,12 @@ public class AppClientEntity {
 
     @Entity
     @Table(name = "app_client_client_settings")
-    @Data
+    @Getter
+    @Setter
+    @ToString
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class ClientSettings implements Serializable {
+    public static class ClientSettingsEntity extends AbstractBaseEntity {
         @Id
         @GeneratedValue
         @Column(columnDefinition = "uuid")

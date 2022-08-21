@@ -1,5 +1,6 @@
 package com.djaller.server.auth.domain;
 
+import com.djaller.server.common.tenant.jpa.AbstractBaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.*;
+
 import java.io.Serializable;
 
 @Getter
@@ -17,7 +19,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "authorization_consents")
 @IdClass(AuthorizationConsentEntity.AuthorizationConsentId.class)
-public class AuthorizationConsentEntity {
+public class AuthorizationConsentEntity extends AbstractBaseEntity {
 
     @Id
     private String registeredClientId;

@@ -8,6 +8,7 @@ import {ForgotPassword} from "./pages/forgot-password";
 import {Provider} from "react-redux";
 import {store} from "./store";
 import {ChangePassword} from "./pages/change-password";
+import {ErrorPage} from "./pages/error";
 
 const theme = createTheme();
 
@@ -23,6 +24,7 @@ function App() {
                             <Route path='/forgot-password' element={<ForgotPassword/>}/>
                             <Route path='/sign-in' element={<SignInPage/>}/>
                             <Route path='/register' element={<RegisterPage/>}/>
+                            <Route path='/error' element={<ErrorPage/>}/>
                         </Route>
                         <Route
                             path="login"

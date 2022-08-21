@@ -80,7 +80,7 @@ public class RegisteredClientMapper {
         return entity;
     }
 
-    protected ClientSettings mapTo(AppClientEntity.ClientSettings clientSettings) {
+    protected ClientSettings mapTo(AppClientEntity.ClientSettingsEntity clientSettings) {
         if (clientSettings == null) {
             return null;
         }
@@ -124,8 +124,8 @@ public class RegisteredClientMapper {
                 .build();
     }
 
-    protected AppClientEntity.ClientSettings mapTo(ClientSettings clientSettings) {
-        var settings = new AppClientEntity.ClientSettings();
+    protected AppClientEntity.ClientSettingsEntity mapTo(ClientSettings clientSettings) {
+        var settings = new AppClientEntity.ClientSettingsEntity();
         settings.setRequireProofKey(clientSettings.isRequireProofKey());
         settings.setRequireAuthorizationConsent(clientSettings.isRequireAuthorizationConsent());
         settings.setJwkSetUrl(clientSettings.getJwkSetUrl());

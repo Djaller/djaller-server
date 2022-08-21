@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotEmpty;
 
@@ -17,5 +18,6 @@ public class MapString {
     private String type;
 
     @NotEmpty
+    @Column(columnDefinition = "text")
     private String data;
 }

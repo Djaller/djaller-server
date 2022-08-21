@@ -1,5 +1,6 @@
 package com.djaller.server.auth.config;
 
+import com.djaller.server.auth.mapper.RegisteredClientMapper;
 import com.djaller.server.auth.service.ClientService;
 import com.djaller.server.auth.service.ProviderClientService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class InitConfig {
     private final ProviderClientService providerClientService;
     private final ClientService clientService;
     private final PasswordEncoder passwordEncoder;
+    private final RegisteredClientMapper registeredClientMapper;
 
     @PostConstruct
     void postConstruct() {
@@ -39,9 +41,9 @@ public class InitConfig {
             log.info("Creating basic auth client...");
 
             var registeredClient = authRegisteredClient();
-            if (clientService.findByClientId(registeredClient.getClientId()) != null)
+            if (clientService.findByClientId(registeredClient.getClientId()).isPresent())
                 clientService.deleteByClientId(registeredClient.getClientId());
-            clientService.save(registeredClient);
+            clientService.save(registeredClientMapper.toEntity(registeredClient));
 
             var clientRegistration = authClientRegistration();
             if (providerClientService.findByRegistrationId(clientRegistration.getRegistrationId()) != null)
@@ -60,13 +62,15 @@ public class InitConfig {
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_JWT)
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
                 .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
+                .clientAuthenticationMethod(ClientAuthenticationMethod.PRIVATE_KEY_JWT)
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.JWT_BEARER)
                 .authorizationGrantType(AuthorizationGrantType.PASSWORD)
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .redirectUri("https://oidcdebugger.com/debug")
-                .redirectUri("*")
-                .redirectUri("**")
+                .redirectUri("https://oauthdebugger.com/debug")
+                .redirectUri("https://oauth.pstmn.io/v1/callback")
                 .scope("openid")
                 .clientName("Auth Client")
                 .build();

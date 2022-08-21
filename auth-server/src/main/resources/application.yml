@@ -11,6 +11,8 @@ spring:
       ddl-auto: update
   flyway:
     enabled: false
+  #autoconfigure:
+   # exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
 
 management:
   endpoints:
@@ -26,23 +28,19 @@ springdoc:
 
 server:
   forward-headers-strategy: framework
+#  error:
+#    whitelabel:
+#      enabled: false
 
 feign:
   hystrix:
     enabled: true
-  okhttp:
-    enabled: true
-  oauth2:
-    enabled: true
-    load-balanced: true
   compression:
     request:
       enabled: true
   client:
     config:
-      create-account:
-        exception-propagation-policy: UNWRAP
-      update-account:
+      api-server:
         exception-propagation-policy: UNWRAP
 
 logging:

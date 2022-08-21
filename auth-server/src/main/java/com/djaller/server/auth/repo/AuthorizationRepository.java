@@ -19,9 +19,9 @@ public interface AuthorizationRepository extends BaseRepo<AuthorizationEntity, S
     Optional<AuthorizationEntity> findByRefreshTokenValue(String refreshToken);
 
     @Query("select a from AuthorizationEntity a where a.state = :token" +
-            " or a.authorizationCodeValue = :token" +
-            " or a.accessTokenValue = :token" +
-            " or a.refreshTokenValue = :token"
+            " or a.authorizationCode.value = :token" +
+            " or a.accessToken.value = :token" +
+            " or a.refreshToken.value = :token"
     )
-    Optional<AuthorizationEntity> findByStateOrAuthorizationCodeValueOrAccessTokenValueOrRefreshTokenValue(@Param("token") String token);
+    Optional<AuthorizationEntity> findOneByToken(@Param("token") String token);
 }

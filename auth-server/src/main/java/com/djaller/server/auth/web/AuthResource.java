@@ -10,7 +10,9 @@ import com.djaller.server.auth.model.RegisterData;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,12 +30,18 @@ public class AuthResource {
 
     private final CreateAccount createAccount;
     private final RegisterDataMapper registerDataMapper;
+    private final RememberMeServices rememberMeServices;
 
     @PostMapping("login")
     public RedirectionData login(@RequestBody @Valid LoginData loginData, HttpServletRequest request, HttpServletResponse response) {
         log.info("Login with {}", loginData);
         try {
-            request.login(loginData.getUsername(), loginData.getPassword());
+            if (isAuthenticated()) {
+                log.info("Account already authenticated");
+            } else {
+                request.login(loginData.getUsername(), loginData.getPassword());
+            }
+
             var requestCache = new HttpSessionRequestCache();
             var savedRequest = requestCache.getRequest(request, response);
             if (savedRequest != null) {
@@ -52,6 +60,11 @@ public class AuthResource {
 
     @PostMapping("register")
     public Account register(@RequestBody @Valid RegisterData registerData) {
+        if (isAuthenticated()) {
+            log.info("Cannot register if already logged in");
+            return null;
+        }
+
         log.info("Register new user {}", registerData);
         var mapped = registerDataMapper.map(registerData);
         var account = createAccount.createAccount(mapped);
@@ -76,5 +89,13 @@ public class AuthResource {
                 cookie.setMaxAge(0);
             }
         }
+    }
+
+    private boolean isAuthenticated() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof AnonymousAuthenticationToken) {
+            return false;
+        }
+        return authentication.isAuthenticated();
     }
 }
