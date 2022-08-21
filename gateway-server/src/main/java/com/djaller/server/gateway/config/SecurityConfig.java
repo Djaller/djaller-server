@@ -14,7 +14,7 @@ public class SecurityConfig {
         http
                 .authorizeExchange(authorizeExchangeSpec ->
                         authorizeExchangeSpec
-                                .pathMatchers("/auth/**", "/oauth2/**", "/actuator/**", "/.well-known/**").permitAll()
+                                .pathMatchers("/auth/**", "/oauth2/**", "/actuator/**", "/*.ico", "/.well-known/**").permitAll()
                                 .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt)

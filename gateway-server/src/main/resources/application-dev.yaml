@@ -1,25 +1,12 @@
 server:
-  forward-headers-strategy: framework
+  port: 8004
 
 spring:
-  zipkin:
-    sender:
-      type: rabbit
-  application:
-    name: gateway-server
+  rabbitmq:
+    username: djaller
+    password: 4l3hA255kX9U
   cloud:
     gateway:
-      default-filters:
-        - name: Retry
-          args:
-            retries: 3
-            statuses: BAD_GATEWAY
-            methods: GET
-            backoff:
-              firstBackoff: 10ms
-              maxBackoff: 50ms
-              factor: 2
-              basedOnPreviousValue: false
       routes:
         - id: auth-service
           uri: lb://auth-server
@@ -27,7 +14,7 @@ spring:
             - Path=/auth/oauth2/**, /auth/api/**, /.well-known/**
 
         - id: auth-client
-          uri: http://auth-client/auth
+          uri: http://localhost:3000/auth
           predicates:
             - Path=/auth/**
           filters:
@@ -60,11 +47,13 @@ spring:
             - Path=/api/accounts/**
           filters:
             - RemoveRequestHeader=Cookie
-      set-status:
-        original-status-header-name: original-http-status
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
+  security:
+    oauth2:
+      resource-server:
+        jwt:
+          issuer-uri: http://localhost:8004
+
+logging:
+  level:
+    com.djaller.server: debug

@@ -1,0 +1,16 @@
+spring:
+  cloud:
+    gateway:
+      default-filters:
+        - SecureHeaders
+        - name: Retry
+          args:
+            retries: 3
+            statuses: BAD_GATEWAY
+            methods: GET
+            backoff:
+              firstBackoff: 10ms
+              maxBackoff: 50ms
+              factor: 2
+              basedOnPreviousValue: false
+
