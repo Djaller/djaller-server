@@ -1,8 +1,6 @@
 package com.djaller.server.auth.helper;
 
-import com.djaller.server.account.model.interfaces.CreateAccount;
 import com.djaller.server.account.model.interfaces.GetAccountByEmail;
-import com.djaller.server.account.model.interfaces.UpdateAccount;
 import com.djaller.server.auth.mapper.AccountUserDetailMapper;
 import com.djaller.server.auth.model.CurrentUser;
 import com.djaller.server.auth.service.AccountPasswordService;
@@ -26,8 +24,8 @@ import org.springframework.stereotype.Component;
 public class UserService extends DefaultOAuth2UserService implements UserDetailsService, OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final GetAccountByEmail getAccount;
-    private final CreateAccount createAccount;
-    private final UpdateAccount updateAccount;
+    // private final CreateAccount createAccount;
+    // private final UpdateAccount updateAccount;
     private final AccountUserDetailMapper mapper;
     private final AccountPasswordService passwordService;
 
@@ -63,7 +61,7 @@ public class UserService extends DefaultOAuth2UserService implements UserDetails
     }
 
     private CurrentUser processOAuth2User(OAuth2UserRequest oAuth2UserRequest, OAuth2User oAuth2User) {
-        var oAuth2UserInfo = mapper.toOAuth2UserInfo(oAuth2UserRequest, oAuth2User);
+        // var oAuth2UserInfo = mapper.toOAuth2UserInfo(oAuth2UserRequest, oAuth2User);
         // TODO
         return null;
     }

@@ -3,14 +3,7 @@ spring:
     sender:
       type: rabbit
   application:
-    name: webhook-server
-  cloud:
-#    stream:
-#      bindings:
-#        on_app_event:
-#          group: webhook
-    function:
-      definition: on_app_event
+    name: tontine-server
   jpa:
     hibernate:
       ddl-auto: update

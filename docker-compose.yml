@@ -22,6 +22,13 @@ services:
     volumes:
       - 'redis_data:/bitnami/redis/data'
 
+  redis-admin:
+    image: marian/rebrow
+    ports:
+      - "5001:5001"
+    links:
+      - redis:db
+
   rabbitmq:
     image: bitnami/rabbitmq
     ports:

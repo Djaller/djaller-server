@@ -9,11 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
-import org.springframework.session.data.redis.RedisIndexedSessionRepository;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
-import org.springframework.web.context.annotation.RequestScope;
 
 @Profile("redis")
 @EnableRedisHttpSession
@@ -46,15 +43,6 @@ public class RedisConfig implements CachingConfigurer {
             String tenant = TenantContext.getTenantSafe();
             return "%s::%s".formatted(tenant, sb);
         };
-    }
-
-    @RequestScope
-    // @Bean(name = "sessionRepository")
-    public RedisIndexedSessionRepository sessionRepository(RedisTemplate<Object, Object> redisTemplate) {
-        var repo = new RedisIndexedSessionRepository(redisTemplate);
-        var tenant = TenantContext.getTenantSafe();
-        repo.setRedisKeyNamespace("%s:spring:session".formatted(tenant));
-        return repo;
     }
 
     @Bean

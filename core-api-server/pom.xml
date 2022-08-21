@@ -24,6 +24,10 @@
             <groupId>com.djaller.server</groupId>
             <artifactId>common-account-model</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.djaller.server</groupId>
+            <artifactId>common-tenant-jpa</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.mapstruct</groupId>

@@ -7,7 +7,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.io.IOException;
-import java.time.Instant;
 
 public class GrantedAuthorityGsonTypeAdapter extends TypeAdapter<GrantedAuthority> {
     @Override

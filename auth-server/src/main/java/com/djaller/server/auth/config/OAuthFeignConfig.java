@@ -28,10 +28,7 @@ public class OAuthFeignConfig {
     @Bean
     public RequestInterceptor requestInterceptor() {
         var clientCredentialsFeignManager = new OAuthClientCredentialsFeignManager(authorizedClientManager(), CLIENT_REGISTRATION_ID);
-
-        return requestTemplate -> {
-            requestTemplate.header(HttpHeaders.AUTHORIZATION, "Bearer " + clientCredentialsFeignManager.getAccessToken());
-        };
+        return requestTemplate -> requestTemplate.header(HttpHeaders.AUTHORIZATION, "Bearer " + clientCredentialsFeignManager.getAccessToken());
     }
 
     @Bean

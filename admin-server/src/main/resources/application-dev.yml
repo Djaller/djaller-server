@@ -1,0 +1,6 @@
+server:
+  port: 8000
+spring:
+  rabbitmq:
+    username: djaller
+    password: 4l3hA255kX9U

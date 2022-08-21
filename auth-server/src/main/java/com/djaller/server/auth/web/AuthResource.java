@@ -40,6 +40,10 @@ public class AuthResource {
                 log.info("Account already authenticated");
             } else {
                 request.login(loginData.getUsername(), loginData.getPassword());
+                var auth = SecurityContextHolder.getContext().getAuthentication();
+                if (loginData.isRememberMe() && SecurityContextHolder.getContext().getAuthentication() != null) {
+                    rememberMeServices.loginSuccess(request, response, auth);
+                }
             }
 
             var requestCache = new HttpSessionRequestCache();

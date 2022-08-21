@@ -33,8 +33,6 @@ server:
 #      enabled: false
 
 feign:
-  hystrix:
-    enabled: true
   compression:
     request:
       enabled: true

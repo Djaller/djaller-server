@@ -20,6 +20,10 @@
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.djaller.server</groupId>
+            <artifactId>common-tenant-jpa</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.springdoc</groupId>

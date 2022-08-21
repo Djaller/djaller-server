@@ -13,7 +13,7 @@ public class SecurityConfig {
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests(authorizeRequests -> authorizeRequests
-                        .antMatchers("/swagger.html/**", "/swagger-ui.html/**", "/swagger-ui/**", "/actuator/**", "/v3/api-docs/**", "/h2-console/**").permitAll()
+                        .antMatchers("/swagger.html/**", "/swagger-ui.html/**", "/swagger-ui/**", "/*.ico", "/actuator/**", "/v3/api-docs/**", "/h2-console/**").permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
         return http.build();

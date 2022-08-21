@@ -10,7 +10,7 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) throws Exception {
+    public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
         http
                 .authorizeExchange(authorizeExchangeSpec ->
                         authorizeExchangeSpec
